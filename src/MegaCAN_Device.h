@@ -2,19 +2,12 @@
 #define MEGA_CAN_BASE_H_
 
 #include <Arduino.h>
-#include <SPI.h>
-#include <mcp_can/mcp_can.h>
-#include <avr/interrupt.h>
 
 #include <string.h>
 #include <stdint.h>
 
 #include "logging.h"
 #include "MSG_defn.h"
-
-#include <util/atomic.h>
-#define MC_ATOMIC_START ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-#define MC_ATOMIC_END }
 
 #define DECL_MEGA_CAN_REV(USER_REV) \
 	static_assert(sizeof(USER_REV) <= MAX_REVISION_BYTES, \
@@ -72,47 +65,47 @@ public:
 	bool
 	isFull() const
 	{
-		MC_ATOMIC_START
+		
 		return next(back_) == front_;
-		MC_ATOMIC_END
+		
 	}
 
 	bool
 	isEmpty() const
 	{
-		MC_ATOMIC_START
+		
 		return size_ == 0;
-		MC_ATOMIC_END
+		
 	}
 
 	void
 	push()
 	{
-		MC_ATOMIC_START
+		
 		if (next(back_) != front_)// make sure it's not full
 		{
 			back_ = next(back_);
 			size_++;
 		}
-		MC_ATOMIC_END
+		
 	}
 
 	void
 	pop()
 	{
-		MC_ATOMIC_START
+		
 		if (size_ != 0)// make sure it's not empty
 		{
 			front_ = next(front_);
 			size_--;
 		}
-		MC_ATOMIC_END
+		
 	}
 
 	unsigned int
 	size()
 	{
-		MC_ATOMIC_START
+	
 		if (back_ >= front_)
 		{
 			return back_ - front_;
@@ -121,7 +114,7 @@ public:
 		{
 			return back_ + buff_size_ - front_;
 		}
-		MC_ATOMIC_END
+		
 	}
 
 	uint8_t
@@ -291,7 +284,7 @@ protected:
 	 */
 	virtual void
 	applyCanFilters(
-		MCP_CAN *can);
+		TWAI_CAN *can);
 
 	/**
 	 * Overridable method for subclass to implement. This method is called by
@@ -491,7 +484,7 @@ public:
 	static const char* __MegaCAN_SerialRevision;
 
 private:
-	MCP_CAN can_;
+	TWAI_CAN can_;
 	uint8_t myID_;
 	// MCP2515 interrupt pin
 	// active low
