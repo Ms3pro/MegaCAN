@@ -3,7 +3,7 @@
 #define INC_ERROR_COUNTER(VAR) if(VAR!=0xFF){VAR++;}
 #define IS_VISIBLE_ASCII(c) (c >= 32 && c <= 126)
 
-#define LOG_CAN_TRAFFIC 0// set to 1 to log CAN traffic to UART
+#define LOG_CAN_TRAFFIC 1// set to 1 to log CAN traffic to UART
 
 namespace MegaCAN
 {
@@ -614,9 +614,9 @@ Device::sendMsgBuf(
 	 * messages out. The SPI library has a tendency to get stuck in
 	 * SPI.transfer() while waiting for the SPIF interrupt flag to get set.
 	 */
-	MC_ATOMIC_START
+	
 	res = can_.sendMsgBuf(id,ext,len,buf,false);// false -> don't wait for send
-	MC_ATOMIC_END
+	
 
 	return res == CAN_OK;
 }
