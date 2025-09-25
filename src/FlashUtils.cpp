@@ -124,6 +124,7 @@ namespace FlashUtils
     const uint8_t &value)
   {
     EEPROM.write(offset,value);
+    EEPROM.commit();
   }
 
   template <>
@@ -133,6 +134,7 @@ namespace FlashUtils
     const int8_t &value)
   {
     EEPROM.write(offset,value);
+    EEPROM.commit();
   }
   
   template <>
